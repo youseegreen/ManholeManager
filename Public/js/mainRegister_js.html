@@ -274,7 +274,7 @@ okBtn.addEventListener('click', function () {
     const croppedImageDataURL = endMofigyImageGeometry();  
     // 画像データを表示
     croppedImage.src = croppedImageDataURL;
-    processedImage.src = croppedImageDataURL;
+    applyBrightnessContrastSaturation(croppedImage, processedImage);
 });
 
 // サーバーにマンホール情報をアップロードする
