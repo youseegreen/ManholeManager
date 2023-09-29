@@ -17,9 +17,13 @@
     <input type="file" id="fileInput" accept="image/*">
 
     <h3>画像トリミング</h3>
-    <img id="croppedImage" src="#" alt="Cropped Image" style="max-width: 400px;">
-    <img id="processedImage" src="#" alt="Original Image" style="max-width: 400px;">
-    <img id="downloadImage" src="#" alt="Download Image" style="max-width: 400px;">
+    <div style="display: flex;">
+        <div style="max-width: 450px;">
+        <img id="croppedImage" src="#" alt="Cropped Image" style="max-width: 400px;">
+        </div>
+        <img id="processedImage" src="#" alt="Original Image" style="max-width: 400px;">
+        <img id="downloadImage" src="#" alt="Download Image" style="max-width: 400px;">
+    </div>
     <!-- 回転ボタン -->
     <button id="rotateLeft1">Rotate Left 1</button>
     <button id="rotateRight1">Rotate Right 1</button>        
