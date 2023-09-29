@@ -1,5 +1,6 @@
 LICENSE
 README.md
 debug.log
-ref/*
+**/ref/**
+**/Local/**
 design.pptx
