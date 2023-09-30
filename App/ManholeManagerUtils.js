@@ -58,6 +58,57 @@ function convertImgURL2ImgBlob(imgURL, fileName){
 
 
 /**
+ */
+function deleteFileById(fileId) {
+  try {
+    DriveApp.getFileById(fileId).setTrashed(true); // ファイルをゴミ箱に移動
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+
+
+function deletePhotoFile(fileName){
+  const photoFolder = getPhotoFolder();
+  // ファイル名からファイルを検索
+  var files = photoFolder.getFilesByName(fileName);
+  while(files.hasNext()){
+    let file = files.next();
+    file.setTrashed(true);
+  }  
+}
+
+
+
+
+
+function getFileByName(fileName) {
+    // ファイル名からファイルを検索
+    var files = DriveApp.getFilesByName(fileName);
+    // ファイルが見つかった場合、最初のファイルを取得
+    if (files.hasNext()) {
+      var file = files.next();
+      return file;
+    } else {
+      // ファイルが見つからなかった場合、nullを返すかエラーメッセージを出力
+      return null;
+    }
+}
+
+function getPhotoUrlFromFileName(fileName){
+    var photoFile = getFileByName(fileName);
+    if (photoFile == null) return null;
+    // return photoFile.getDownloadUrl();    
+    var blob = photoFile.getBlob();
+    var photoData = Utilities.base64Encode(blob.getBytes());
+    var contentType = blob.getContentType();
+    return 'data:' + contentType + ';base64,' + photoData;
+}
+
+
+/**
  * マンホールDBスプレッドシートを取得する
  * @return {Spreadsheet}  取得したSpreadsheet
  */
@@ -233,6 +284,30 @@ function registTargetCityToPhotoSheet(row_idx, insert_data){
     var photoSheet = getManholeDBPhotoSheet();
     photoSheet.insertRowBefore(row_idx);
     photoSheet.getRange(row_idx, 1, 1, insert_data.length).setValues([insert_data]);
+}
+
+
+/**
+ * マンホールDBのPhotoSheetの指定した行に対象の市町村を上書きする
+ * @param {string} row_idx             挿入する行番号（ヘッダー=1を含む）
+ * @param {Array.String} insert_data   [地方,都道府県, 市町村, 市町村のひらがな, 写真のファイル名, 撮影日時 
+ * @return {Boolean}               挿入できたか否か
+ */
+function editTargetCityToPhotoSheet(row_idx, insert_data){
+    var photoSheet = getManholeDBPhotoSheet();
+    photoSheet.getRange(row_idx, 1, 1, insert_data.length).setValues([insert_data]);
+}
+
+
+/**
+ * マンホールDBのPhotoSheetの指定した行を削除する
+ * @param {string} row_idx             削除する行番号（ヘッダー=1を含む）
+ * @param {Array.String} insert_data   [地方,都道府県, 市町村, 市町村のひらがな, 写真のファイル名, 撮影日時 
+ * @return {Boolean}               挿入できたか否か
+ */
+function removeTargetCityToPhotoSheet(row_idx){
+    var photoSheet = getManholeDBPhotoSheet();
+    photoSheet.deleteRow(row_idx);
 }
 
 

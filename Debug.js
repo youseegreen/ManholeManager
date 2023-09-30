@@ -91,6 +91,22 @@ function test10(){
 }
 
 
+function test11(){
+  console.log(getTargetRowManholeInfo(10));
+}
+
+
+function test12(){
+  var folder = DriveApp.getFolderById(CipherDecrypt(ENCRYPTED_PHOTO_FOLDER_ID));
+  // ファイル名からファイルを検索
+  var files = folder.getFilesByName("choshishi02.jpg")
+  // ファイルが見つかった場合、最初のファイルを取得
+  while(files.hasNext()){
+    let file = files.next();
+    console.log(file.getName());
+  }  
+}
+
 
 
 

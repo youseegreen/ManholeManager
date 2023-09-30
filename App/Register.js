@@ -77,15 +77,82 @@ function searchManholes(areas, prefectures, startDate, endDate, color = 0, pokef
 
 
 /**
+ * 指定した行番号のマンホール情報をクライアント側に送る
+ * @param {Number} rowIndex     編集するデータベースの行番号
+ * @return {JSON} 
+ */
+function getTargetRowManholeInfo(rowIndex){
+    const retVal = {};
+    const columnNum = 13;
+    const photoSheet = getManholeDBPhotoSheet();
+    const data = photoSheet.getRange(rowIndex, 1, 1, columnNum).getValues()[0];
+    retVal["area"] = data[0];
+    retVal["prefecture"] = data[1];
+    retVal["city"] = data[2];
+    retVal["cityHiragana"] = data[3];
+    retVal["fileName"] = data[4];
+    retVal["date"] = data[5];
+    retVal["latitude"] = data[6];
+    retVal["longitude"] = data[7];
+    retVal["pokefuta"] = data[8];
+    retVal["color"] = data[9];
+    retVal["designed"] = data[10];
+    retVal["chara"] = data[11];
+    retVal["reliability"] = data[12];
+    retVal["photoURL"] = getPhotoUrlFromFileName(data[4]);
+    return retVal;
+}
+
+
+/**
  * マンホールDBに登録されている写真や撮影日時の情報を編集する
  * @param {string} rowIndex     編集するデータベースの行番号
- * @param {string} area         地方
- * @param {string} prefecture   都道府県
- * @param {string} city         市町村
- * @param {string} city_kana    市町村のひらがな
- * @param {string} date         撮影日時
- * @param {form Object} photo   マンホール画像
+ * @param {string} area          地方
+ * @param {string} prefecture    都道府県
+ * @param {string} city          市町村
+ * @param {string} city_kana     市町村のひらがな
+ * @param {string} fileName      保存する写真の名前
+ * @param {string} date          撮影日時
+ * @param {string} latitude      緯度（DMS）
+ * @param {string} longitude     経度（DMS）
+ * @param {Boolean} pokefuta     ポケふたかどうか
+ * @param {Boolean} chara        キャラものかどうか
+ * @param {Boolean} color        カラーかどうか
+ * @param {Boolean} designed     デザインものかどうか
+ * @param {Boolean} reliability  データに信頼性があるかどうか
+ * @param {string} photoURL      写真（'data:image/jpeg;base64,/...'形式）
  */
-function editManhole( area, prefecture, city, city_kana, date, photo){
-
+function editManhole(rowIndex, area, prefecture, city, city_kana, fileName, date, latitude, longitude, 
+    pokefuta, chara, color, designed, reliability, photoURL){
+    editTargetCityToPhotoSheet(rowIndex, [area, prefecture, city, city_kana, fileName, 
+        date, latitude, longitude, pokefuta, chara, color, designed, reliability]);
+    // fileNameの写真を削除する
+    deletePhotoFile(fileName);
+    var photoBlob = convertImgURL2ImgBlob(photoURL, fileName);
+    addManholePhotoToPhotoFolder(photoBlob, fileName);
 }
+
+
+
+/**
+ * マンホールDBに登録されている写真や撮影日時の情報を削除する
+ * @param {string} rowIndex      削除するデータベースの行番号
+ * @param {string} area          地方
+ * @param {string} prefecture    都道府県
+ * @param {string} city          市町村
+ * @param {string} city_kana     市町村のひらがな
+ * @param {string} fileName      保存する写真の名前
+ * @param {string} date          撮影日時
+ * @param {string} latitude      緯度（DMS）
+ * @param {string} longitude     経度（DMS）
+ * @param {Boolean} pokefuta     ポケふたかどうか
+ * @param {Boolean} chara        キャラものかどうか
+ * @param {Boolean} color        カラーかどうか
+ * @param {Boolean} designed     デザインものかどうか
+ * @param {Boolean} reliability  データに信頼性があるかどうか
+ */
+function removeManhole(rowIndex, fileName){
+    removeTargetCityToPhotoSheet(rowIndex);
+    deletePhotoFile(fileName);
+}
+

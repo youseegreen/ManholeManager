@@ -1,0 +1,76 @@
+<script>
+const rowIndexInput = document.getElementById('rowIndex');
+const processedImage = document.getElementById('processedImage');
+const datetimeElement = document.getElementById('datetime');
+const latitudeElement = document.getElementById('latitude');
+const longitudeElement = document.getElementById('longitude');
+const areaInput = document.getElementById('area');
+const prefectureInput = document.getElementById('prefecture');
+const cityInput = document.getElementById('city');
+const cityHiraganaInput = document.getElementById('cityHiragana');
+const colorCheckbox = document.getElementById('color');
+const charaCheckbox = document.getElementById('chara');
+const pokefutaCheckbox = document.getElementById('pokefuta');
+const designedCheckbox = document.getElementById('design');
+const reliabilityCheckbox = document.getElementById('reliability');
+
+const removeBtn = document.getElementById('removeBtn');
+
+let rowIndex = -1;
+let fileName = "";
+let exifData;
+
+// 画像の情報を取得する
+function extractExifData2(dataUrl) {
+  // データURLを取得
+  exifData = piexif.load(dataUrl);
+  delete exifData["0th"]["274"];
+  console.log(exifData);
+  // 撮影日時を取得
+  const datetimeOriginal = exifData["Exif"]["36867"];
+  const datetime = datetimeOriginal || '情報なし';
+  // 緯度経度情報を取得
+  const gps = exifData["GPS"];
+  const latitude = gps[piexif.GPSIFD.GPSLatitude] || '情報なし';
+  const longitude = gps[piexif.GPSIFD.GPSLongitude] || '情報なし';
+  // 撮影日時を表示
+  datetimeElement.textContent = datetime;
+  // 緯度経度情報を表示
+  latitudeElement.textContent = latitude;
+  longitudeElement.textContent = longitude;
+}
+
+
+// 行番号を検索ボタンが押された時の処理
+function getManholeInfo(){
+  // 行番号の取得
+  rowIndex = parseInt(rowIndexInput.value);
+  google.script.run
+    .withSuccessHandler(function(manholeInfo) {
+      console.log(manholeInfo);
+      areaInput.value = manholeInfo["area"];
+      prefectureInput.value = manholeInfo["prefecture"];
+      cityInput.value = manholeInfo["city"];
+      cityHiraganaInput.value = manholeInfo["cityHiragana"];
+      fileName = manholeInfo["fileName"];
+      datetimeElement.textContent = manholeInfo["date"];
+      latitudeElement.textContent = manholeInfo["latitude"];
+      longitudeElement.textContent = manholeInfo["longitude"];
+      processedImage.src = manholeInfo["photoURL"];
+      extractExifData2(processedImage.src);
+    })
+    .getTargetRowManholeInfo(rowIndex);
+}
+
+
+// サーバーにマンホール情報をアップロードする
+removeBtn.addEventListener('click', function () {
+    // 画像データ、フォームの値をサーバーに送信する
+    google.script.run
+        .withSuccessHandler(function(result) {console.log("serverResponse", result); })
+        .withFailureHandler(function(error) { alert("サーバー側でエラーが発生しました: " + error.message); })
+        .removeManhole(rowIndex, fileName);
+});
+</script>
+
+
