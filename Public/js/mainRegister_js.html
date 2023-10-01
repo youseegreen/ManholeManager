@@ -168,28 +168,31 @@ function openGoogleMap(){
 
 
 // GoogleMapのURLからGPS(MSG)を取得する
-function getGPSFromUrl(){
-  const inputGPSText = document.getElementById('inputGPS').value;
-  console.log(inputGPSText);
-  const regex = /@([-0-9.]+),([-0-9.]+),([0-9.]+z)/;
-  const match = inputGPSText.match(regex);
-  if (match) {
-    let latitudeDEG = match[1];
-    let longitudeDEG = match[2];
-    let latitudeDMS = degToDMS(latitudeDEG, 0);
-    let longitudeDMS = degToDMS(longitudeDEG, 1);
-    // EXIF, ブラウザ表示に反映する（別の処理に分けたい）FIXME
-    exifData["GPS"]["1"] = latitudeDMS[3];
-    exifData["GPS"]["2"] = [[latitudeDMS[0], 1], [latitudeDMS[1], 1], [latitudeDMS[2], 10000]];
-    exifData["GPS"]["3"] = longitudeDMS[3];
-    exifData["GPS"]["4"] = [[longitudeDMS[0], 1], [longitudeDMS[1], 1], [longitudeDMS[2], 10000]];
-    console.log(latitudeDMS);
-    latitudeElement.textContent = latitudeDEG; 
-    longitudeElement.textContent = longitudeDEG; 
-  } 
-  else {
-    console.log('URLから緯度経度情報が見つかりませんでした。');
-  }
+function getGpsFromUrl(){
+  // クリップボードからテキストを取得
+  navigator.clipboard.readText().then(function (inputGPSText) {
+    const regex = /@([-0-9.]+),([-0-9.]+),([0-9.]+z)/;
+    const match = inputGPSText.match(regex);
+    if (match) {
+      let latitudeDEG = match[1];
+      let longitudeDEG = match[2];
+      let latitudeDMS = degToDMS(latitudeDEG, 0);
+      let longitudeDMS = degToDMS(longitudeDEG, 1);
+      // EXIF, ブラウザ表示に反映する（別の処理に分けたい）FIXME
+      exifData["GPS"]["1"] = latitudeDMS[3];
+      exifData["GPS"]["2"] = [[latitudeDMS[0], 1], [latitudeDMS[1], 1], [latitudeDMS[2], 10000]];
+      exifData["GPS"]["3"] = longitudeDMS[3];
+      exifData["GPS"]["4"] = [[longitudeDMS[0], 1], [longitudeDMS[1], 1], [longitudeDMS[2], 10000]];
+      console.log(latitudeDMS);
+      latitudeElement.textContent = latitudeDEG; 
+      longitudeElement.textContent = longitudeDEG; 
+    } 
+    else {
+      console.log('URLから緯度経度情報が見つかりませんでした。');
+    }
+  }).catch(function (error) {
+    console.error('クリップボードからテキストを取得できませんでした。', error);
+  });
 }
 
 
