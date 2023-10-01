@@ -220,7 +220,7 @@ function isExistTargetCityInTargetSheet(tgt_sheet, tgt_area, tgt_prefecture, tgt
     // 対象の地方まで飛ばす  values[i][0] : area
     while (1) {
         if (values[i] === undefined) {
-          console.log("DBを一通り見たが検出できなかった");
+          console.log("DBを一通り見たが検出できなかったA");
           return 0;
         }
         var cidx = AREAS.indexOf(values[i][0]);
@@ -230,11 +230,11 @@ function isExistTargetCityInTargetSheet(tgt_sheet, tgt_area, tgt_prefecture, tgt
     // 対象の都道府県まで飛ばす  values[i][1] : prefecture
     while (1) {
         if (values[i] === undefined) {
-          console.log("DBを一通り見たが検出できなかった");
+          console.log("DBを一通り見たが検出できなかったP");
           return 0;
         }
         var cidx = PREFECTURES[tgt_area].indexOf(values[i][1]);
-        if (cidx >= tgt_prefecture_idx) break;
+        if (cidx >= tgt_prefecture_idx || cidx == -1) break;
         i = i + 1;
     }
     // 対象の市があるかを確認   values[i][3] : city_kana
