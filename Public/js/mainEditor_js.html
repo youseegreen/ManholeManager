@@ -38,7 +38,7 @@ let contrast = 1;
 let saturation = 1;
 
 // 画像の情報を取得する
-function extractExifData2(dataUrl) {
+function extractExifData(dataUrl) {
   // データURLを取得
   exifData = piexif.load(dataUrl);
   delete exifData["0th"]["274"];
@@ -55,34 +55,6 @@ function extractExifData2(dataUrl) {
   // 緯度経度情報を表示
   latitudeElement.textContent = latitude;
   longitudeElement.textContent = longitude;
-}
-
-
-// 画像の情報を取得する
-function extractExifData(imgFile) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        // データURLを取得
-        const dataURL = event.target.result; 
-        // 画像からExifデータを取得
-        exifData = piexif.load(dataURL);
-        delete exifData["0th"]["274"];
-        console.log(exifData);
-        // 撮影日時を取得
-        const datetimeOriginal = exifData["Exif"]["36867"];
-        const datetime = datetimeOriginal || '情報なし';
-        // 緯度経度情報を取得
-        const gps = exifData["GPS"];
-        const latitude = gps[piexif.GPSIFD.GPSLatitude] || '情報なし';
-        const longitude = gps[piexif.GPSIFD.GPSLongitude] || '情報なし';
-        // 撮影日時を表示
-        datetimeElement.textContent = datetime;
-        // 緯度経度情報を表示
-        latitudeElement.textContent = latitude;
-        longitudeElement.textContent = longitude;
-    };
-    // ファイルを読み込む
-    reader.readAsDataURL(imgFile);
 }
 
 
@@ -263,7 +235,7 @@ function convertDateFormat() {
 
 
 // 行番号を検索ボタンが押された時の処理
-function getManholeInfo(){
+function getManholeInfoFromServer(){
   // 行番号の取得
   rowIndex = parseInt(rowIndexInput.value);
   google.script.run
@@ -278,7 +250,7 @@ function getManholeInfo(){
       latitudeElement.textContent = manholeInfo["latitude"];
       longitudeElement.textContent = manholeInfo["longitude"];
       croppedImage.src = manholeInfo["photoURL"];
-      extractExifData2(croppedImage.src);
+      extractExifData(croppedImage.src);
       startModifyImageGeometry(croppedImage);
     })
     .getTargetRowManholeInfo(rowIndex);

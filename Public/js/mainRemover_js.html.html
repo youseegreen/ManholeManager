@@ -21,7 +21,7 @@ let fileName = "";
 let exifData;
 
 // 画像の情報を取得する
-function extractExifData2(dataUrl) {
+function extractExifData(dataUrl) {
   // データURLを取得
   exifData = piexif.load(dataUrl);
   delete exifData["0th"]["274"];
@@ -42,7 +42,7 @@ function extractExifData2(dataUrl) {
 
 
 // 行番号を検索ボタンが押された時の処理
-function getManholeInfo(){
+function getManholeInfoFromServer(){
   // 行番号の取得
   rowIndex = parseInt(rowIndexInput.value);
   google.script.run
@@ -57,7 +57,7 @@ function getManholeInfo(){
       latitudeElement.textContent = manholeInfo["latitude"];
       longitudeElement.textContent = manholeInfo["longitude"];
       processedImage.src = manholeInfo["photoURL"];
-      extractExifData2(processedImage.src);
+      extractExifData(processedImage.src);
     })
     .getTargetRowManholeInfo(rowIndex);
 }

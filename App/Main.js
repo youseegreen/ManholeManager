@@ -21,7 +21,6 @@ function doGet(e){
     var template = HtmlService.createTemplateFromFile('Public/html/editor.html');
     template.index = index;
     return template.evaluate().setTitle('Manhole editor').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
-    return HtmlService.createTemplateFromFile('Public/html/editor.html').evaluate().setTitle('Manhole editor').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
   }
   else if(page =="remover"){
     var template = HtmlService.createTemplateFromFile('Public/html/remover.html');
