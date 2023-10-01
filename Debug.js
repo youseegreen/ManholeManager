@@ -108,8 +108,5 @@ function test12(){
 }
 
 
-function test13(){
-  console.log(isExistTargetCityInTargetSheet(CITY_SHEET, "中国地方", "山口県", "てすとし", "てすとし"));
-  console.log(isExistTargetCityInTargetSheet(PHOTO_SHEET, "その他", "アメリカ", "てすとし", "てすとし"));
-}
+
 
