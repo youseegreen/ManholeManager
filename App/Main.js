@@ -11,7 +11,22 @@
  * @return {HtmlOutput Object} 表示するhtmlオブジェクト
  */
 function doGet(e){
-    return HtmlService.createTemplateFromFile('Public/html/register.html').evaluate().setTitle('Manhole register').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
+  var page=e.parameter["p"];
+  var index=e.parameter["i"];
+
+  if(page == "register" || page==null){
+    return HtmlService.createTemplateFromFile('Public/html/register.html').evaluate().setTitle('Manhole register').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');    
+  }
+  else if(page =="editor"){
+    var template = HtmlService.createTemplateFromFile('Public/html/editor.html');
+    template.index = index;
+    return template.evaluate().setTitle('Manhole editor').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
+  }
+  else if(page =="remover"){
+    var template = HtmlService.createTemplateFromFile('Public/html/remover.html');
+    template.index = index;
+    return template.evaluate().setTitle('Manhole remover').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
+  }
 }
   
 

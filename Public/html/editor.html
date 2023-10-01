@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>マンホール編集アプリ</title>
+    <!-- 画像トリミング用ライブラリ Cropper.js -->
+    <!-- <link rel="stylesheet" href="../../Vendor/CropperJS/cropper_min_css.html">
+    <script src="../../Vendor/CropperJS/cropper_min_js.html"></script> -->
+    <?!= include('Vendor/CropperJS/cropper_min_css'); ?>
+    <?!= include('Vendor/CropperJS/cropper_min_js'); ?>
+    <!-- 画像データ抽出用ライブラリ piexif.js -->
+    <!-- <script src="../../Vendor/PiexifJS/piexif_js.html"></script> -->
+    <?!= include('Vendor/PiexifJS/piexif_js'); ?>
+</head>
+
+<body>
+    <h3>データベースからマンホール検索</h3>
+    <input type="text" id="rowIndex" value=<?= index ?>>
+    <button onclick="getManholeInfoFromServer()">検索</button>
+
+    <h3>画像トリミング</h3>
+    <div style="display: flex;">
+        <div style="max-width: 450px;">
+        <img id="croppedImage" src="#" alt="Cropped Image" style="max-width: 400px;">
+        </div>
+        <img id="processedImage" src="#" alt="Original Image" style="max-width: 400px;">
+        <img id="downloadImage" src="#" alt="Download Image" style="max-width: 400px;">
+    </div>
+    <!-- 回転ボタン -->
+    <button id="rotateLeft1">Rotate Left 1</button>
+    <button id="rotateRight1">Rotate Right 1</button>        
+    <button id="rotateLeft90">Rotate Left 90</button>
+    <button id="rotateRight90">Rotate Right 90</button>        
+    <!-- OKボタン -->
+    <button id="okBtn">OK</button>
+
+    <div>
+        <label for="brightness">Brightness:</label>
+        <input type="range" id="brightness" min="0" max="200" step="1" value="100">
+    </div>
+    <div>
+        <label for="contrast">Contrast:</label>
+        <input type="range" id="contrast" min="0" max="200" step="1" value="100">
+    </div>
+    <div>
+        <label for="saturation">Saturation:</label>
+        <input type="range" id="saturation" min="0" max="200" step="1" value="100">
+    </div>
+
+    <p>撮影日時: <span id="datetime"></span></p>
+    <input type="text" id="inputDate" placeholder="YYYYMMDD HHmmss">
+    <button onclick="convertDateFormat()">変換</button>
+    <p>緯度: <span id="latitude"></span></p>
+    <p>経度: <span id="longitude"></span></p>
+    <button id="showGoogleMapBtn">Google Mapを表示</button>
+    <input type="text" id="inputGPS" placeholder="/@XXX,YYY,ZZZz/">
+    <button onclick="getGPSFromUrl()">変換</button>
+
+    <input type="text" id="area" placeholder="area">
+    <input type="text" id="prefecture" placeholder="Prefecture">
+    <input type="text" id="city" placeholder="City">
+    <input type="text" id="cityHiragana" placeholder="Hiragana City">
+    <input type="checkbox" id="color"> Color Photo
+    <input type="checkbox" id="pokefuta"> Pokefuta Photo
+    <input type="checkbox" id="design"> Designed Photo
+    <input type="checkbox" id="chara"> Chara Photo
+    <input type="checkbox" id="reliability"> Reliability
+    <button id="submitBtn">Submit</button>
+    <?!= include('Public/js/mainEditor_js'); ?>
+</body>
+</html>
+
