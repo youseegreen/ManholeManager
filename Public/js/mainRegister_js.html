@@ -171,7 +171,7 @@ function openGoogleMap(){
 function getGPSFromUrl(){
   const inputGPSText = document.getElementById('inputGPS').value;
   console.log(inputGPSText);
-  const regex = /@([-0-9.]+),([-0-9.]+),([0-9]+z)/;
+  const regex = /@([-0-9.]+),([-0-9.]+),([0-9.]+z)/;
   const match = inputGPSText.match(regex);
   if (match) {
     let latitudeDEG = match[1];
