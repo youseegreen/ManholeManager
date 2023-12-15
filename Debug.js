@@ -108,5 +108,12 @@ function test12(){
 }
 
 
+function test13(){
+  console.log(isExistTargetCityInTargetSheet(CITY_SHEET, "東北地方", "青森県", "台北市", "たいぺいし"));
+  console.log(isExistTargetCityInTargetSheet(CITY_SHEET, "中国地方", "山口県", "台北市", "たいぺいし"));
+  console.log(isExistTargetCityInTargetSheet(CITY_SHEET, "その他", "台湾", "台北市", "たいぺいし"));
+}
+
+
 
 
