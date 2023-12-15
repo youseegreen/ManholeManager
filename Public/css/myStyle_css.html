@@ -1,0 +1,462 @@
+<style>
+body {
+    margin: 0;
+} 
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="button"] {
+    display: none;
+}
+
+.my-btn {
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(23, 189, 81);
+    color: white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    justify-content: space-around;
+}
+.my-btn:hover {
+    background-color: rgb(5, 127, 48);
+    cursor: pointer;
+}
+
+.my-toggle-btn {
+    width: 100%;
+    margin: 0 auto;
+    color: white;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    text-align: center;
+    vertical-align: middle;    
+    user-select: none;
+    background-color: rgb(219, 219, 219);
+}
+.my-toggle-btn:hover {
+    cursor: pointer;
+}
+input[type=checkbox]:checked + .my-toggle-btn {
+    background:  rgb(33, 139, 44);
+}
+
+.loading {
+    position: relative;
+    display: none;
+}
+.loading div {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+.loading div img {
+    margin: auto;
+    width: 100%;
+}
+
+/* Body */
+.main-container {
+    width: 95%; 
+    max-width: 1216px; 
+    height: 80vh;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 100px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    font-size: large;
+    /* background-color: rgba(127, 255, 212, 0.1); */
+}
+
+.sub-container {
+    width: 500px;
+    height: 100%;
+    background-color: rgba(53, 225, 127, 0.1);
+}
+
+.title-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 1vh;
+    color: white;
+    background-color:rgba(10, 74, 10, 0.6);
+    font-size: larger;
+    user-select: none;
+}
+
+.topic-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 1vh;
+}
+
+.photoArea {
+    width: 100%;
+    min-height: 507px;
+    max-height: 550px;
+    margin-bottom: 1vh;
+    background-color:rgba(43, 226, 202, 0.2);
+}
+#originImage {
+    display: none;
+    width: 100%;
+    min-height: 507px;
+    max-height: 550px;
+}
+#processedImage {
+    display: none;
+    width: 100%;
+    height: 507px;
+}
+#geometoryComp {
+    display: none;
+}
+#colorComp {
+    display: none;
+}
+
+.place-container {
+    width: 50%;
+    margin-bottom: 1vh;
+    text-align: center; 
+}
+
+.text-box{
+    padding: 3px 5px; 
+    font-size: 16px;
+    border-radius: 3px; /*ボックス角の丸み*/
+    border: 2px solid #ddd; /*枠線*/
+}
+
+.topic-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-bottom: 1vh;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1%;
+}
+.slider-container > div {
+    display: block;
+    width: 14%;
+    text-align: center;
+}
+.slider-container > input[type="range"] {
+    display: block;
+    width: 85%;
+}
+
+
+
+
+
+/* ヘッダー関係 */
+header{
+    width: 100%;
+    height: 10vh;  
+    max-height: 65px;  
+    background-color: rgba(0, 118, 65, 0.8);
+    position :fixed;  /*ヘッダーを上で固定*/
+    top: 0; 		  /*position fixedの続き、どこに固定かを指定*/
+    display: flex;  
+    align-items: center;  /* 子要素が縦方向の中心で合う*/
+}
+.header-container {
+    max-width: 1216px;  /* 1280pxの95% */
+    width: 95%; 
+    margin-right: auto;
+    margin-left: auto;
+}
+.header-left{
+    font-size: 24px;  
+    color: white;
+    float: left; 
+    vertical-align: middle;
+}
+.header-right{
+    font-size: 18px;
+    color: white;
+    float: right;
+    vertical-align: middle;
+}
+header a {
+    text-decoration: none;
+    color: white;
+}
+
+.hamburger-menu{
+    display: none;
+    margin: 0 30px 0 auto; /*上 右 下 左 左をautoにしているので右寄せになる*/
+}
+.menu-btn{
+    position: fixed;
+    top: 0px;
+    display: flex;
+    height: 65px;
+    width: 45px;
+    justify-content: center;
+    align-items: center;
+    z-index: 90;
+    background-color: none; /*#3584bb;*/
+}
+.menu-btn span,
+.menu-btn span:before,
+.menu-btn span:after {
+  content: '';
+  display: block;
+  height: 3px;
+  width: 25px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  position: absolute;
+}
+.menu-btn span:before {
+  bottom: 8px;
+}
+.menu-btn span:after {
+  top: 8px;
+}
+#menu-btn-check:checked ~ .menu-btn span {
+  background-color: rgba(255, 255, 255, 0);/*メニューオープン時は真ん中の線を透明にする*/
+}
+#menu-btn-check:checked ~ .menu-btn span::before {
+  bottom: 0;
+  transform: rotate(45deg);
+}
+#menu-btn-check:checked ~ .menu-btn span::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+#menu-btn-check {
+  display: none;
+}
+.menu-content {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 100%;     
+    z-index: 60;
+    background-color: rgba(0, 118, 65, 0.9);
+    transition: all 0.5s;
+}
+.menu-content ul {
+    padding: 70px 10px 0;
+}
+.menu-content ul li {
+    border-bottom: solid 1px #ffffff;
+    list-style: none;
+}
+.menu-content ul li a {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    box-sizing: border-box;
+    color:#ffffff;
+    text-decoration: none;
+    padding: 9px 15px 10px 0;
+    position: relative;
+}
+.menu-content ul li a::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-top: solid 2px #ffffff;
+    border-right: solid 2px #ffffff;
+    transform: rotate(45deg);
+    position: absolute;
+    right: 11px;
+    top: 16px;
+}
+#menu-btn-check:checked ~ .menu-content {
+    /* left: 50%;メニューを画面内へ */
+    left: 0%;
+}
+
+.header-right nav {
+    margin: 0 0 0 auto; /*上 右 下 左 */  
+}
+.header-right nav ul {
+    list-style: none;
+    margin: 0;
+    display: flex;
+}
+.header-right nav li {
+    margin: 4px 0 0 40px;
+}
+@media(max-width:800px) {
+    nav {
+        display: none; 
+    }
+    .hamburger-menu {
+        display: block; 
+    }
+}
+
+
+footer{
+  width: 100%;
+  margin-top: 3vh;
+  margin-left: auto;
+  margin-right: auto;
+  /* position: absolute;
+  bottom: 0; */
+  padding: 1vh 0 1vh 0;
+  background: hsl(220, 10%, 90%);
+  box-shadow: -50vw 0 hsl(220, 10%, 90%), 50vw 0 hsl(220, 10%, 90%);
+  text-align: center;
+  font-size: 12px;
+}
+footer a
+{
+  color: #333333;
+  background-color: transparent;
+  text-decoration:none;
+  border-bottom:0rem;
+}
+
+footer a:hover
+{
+  color: #055622;
+  text-decoration: underline;
+  border-bottom:1rem;
+}
+
+
+
+.w03e {
+    width: 0.3em;
+}
+.w5 {
+    width: 5%;
+}
+.w9 {
+    width: 9%;
+}
+.w15 {
+    width: 15%;
+}
+.w19 {
+    width: 19%;
+}
+.w20 {
+    width: 20%;
+}
+.w22 {
+    width: 22%;
+}
+.w24 {
+    width: 24%;
+}
+.w25 {
+    width: 25%;
+}
+.w30 {
+    width: 30%;
+}
+.w33 {
+    width: 33%;
+}
+.w35 {
+    width: 35%;
+}
+.w40 {
+    width: 40%;
+}
+.w42 {
+    width: 42%;
+}
+.w45 {
+    width: 45%;
+}
+.w49 {
+    width: 49%;
+}
+.w50 {
+    width: 50%;
+}
+.w55 {
+    width: 55%;
+}
+.w59 {
+    width: 59%;
+}
+.w60 {
+    width: 60%;
+}
+.w65 {
+    width: 65%;
+}
+.w69 {
+    width: 69%;
+}
+.w70 {
+    width: 70%;
+}
+.w74 {
+    width: 74%;
+}
+.w75 {
+    width: 75%;
+}
+.w76 {
+    width: 76%;
+}
+.w78 {
+    width: 78%;
+}
+.w80 {
+    width: 80%;
+}
+.w85 {
+    width: 85%;
+}
+.l5 {
+    margin-left: 5%;
+}
+.thick02 {
+    padding: 0.2em 0em;
+}
+.thick05 {
+    padding: 0.5em 0em;
+}
+.thick08 {
+    padding: 0.8em 0em;
+}
+.space1 {
+    width: 100%;
+    margin-top: 1vh;
+}
+.space2 {
+    width: 100%;
+    margin-top: 2vh;
+}
+.vmiddle {
+    display: flex;
+    align-items: center;
+}
+</style>
