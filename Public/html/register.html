@@ -1,69 +1,193 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!-- レスポンシブにするために必要 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>マンホール登録アプリ</title>
-    <!-- 画像トリミング用ライブラリ Cropper.js -->
-    <!-- <link rel="stylesheet" href="../../Vendor/CropperJS/cropper_min_css.html">
-    <script src="../../Vendor/CropperJS/cropper_min_js.html"></script> -->
+    <!-- アイコン関連のインクルード -->
+    <link rel="icon" href="https://yushisato.com/images/logos/youseegreen.ico">
+    <link rel="shortcut icon" href="https://yushisato.com/images/logos/youseegreen.ico">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <!-- Local開発用 -->
+    <!-- <link rel="stylesheet" href="./myCustomRegister.css">
+    <link rel="stylesheet" href="./Vendor/cropper.min.css">
+    <script src="./Vendor/cropper.min.js"></script>
+    <script src="./Vendor/piexif.js"></script> -->
+    <!-- GAS用 -->
+    <?!= include('Public/css/myStyle_css'); ?>    
     <?!= include('Vendor/CropperJS/cropper_min_css'); ?>
-    <?!= include('Vendor/CropperJS/cropper_min_js'); ?>
-    <!-- 画像データ抽出用ライブラリ piexif.js -->
-    <!-- <script src="../../Vendor/PiexifJS/piexif_js.html"></script> -->
+    <?!= include('Vendor/CropperJS/cropper_min_js'); ?> 
     <?!= include('Vendor/PiexifJS/piexif_js'); ?>
 </head>
 
 <body>
-    <h3>ファイル選択</h3>>
-    <input type="file" id="fileInput" accept="image/*">
+    <header>
+        <div class="header-container">
+            <!-- ヘッダー左 ブランドロゴ -->
+            <div class="header-left">
+                <a>Manhole Register</a>
+            </div>
+            <!-- メニュー等 ヘッダー右 -->
+            <div class="header-right">
+              <!-- スマホ用 : ハンバーガメニュー -->
+              <div class="hamburger-menu">
+                  <input type="checkbox" id="menu-btn-check">
+                  <label for="menu-btn-check" class="menu-btn"><span></span></label>
+                  <div class="menu-content">
+                      <ul>
+                        <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=editor">Editor</a></li>
+                        <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=remover">Remover</a></li>
+                      </ul>
+                  </div>
+              </div>    
+              <!-- PC用 : 直書き -->
+              <nav class="pc-nav">
+                <ul>
+                  <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=editor">Editor</a></li>
+                  <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=remover">Remover</a></li>
+                </ul>
+              </nav>
+            </div>
+      </div>
+    </header>
 
-    <h3>画像トリミング</h3>
-    <div style="display: flex;">
-        <div style="max-width: 450px;">
-        <img id="croppedImage" src="#" alt="Cropped Image" style="max-width: 400px;">
+    <div class="main-container">
+
+        <div class="sub-container">
+            <div class="loading"><div><img src="../loading.gif"/></div></div>
+
+            <div class="topic-container">
+                <input id="fileInput" type="file" accept="image/*"/>
+                <label class="my-btn thick05 w59" for="fileInput">ファイル選択</label>
+
+                <input id="geometoryCompBtn" type="checkbox"/>
+                <label class="my-toggle-btn thick05 w19" for="geometoryCompBtn">幾何補正</label>
+                <input id="colorCompBtn" type="checkbox"/>
+                <label class="my-toggle-btn thick05 w19" for="colorCompBtn">色補正</label>
+            </div>
+
+            <div class="photoArea">
+                <img id="originImage" class="image" src="#" alt="Original Image">    
+                <img id="processedImage" class="image" src="#" alt="Processed Image">
+            </div>
+
+            <div id="geometoryComp" class="topic-container">
+                <div class="topic-container w85">
+                    <label class="my-btn thick08 w24" onclick="rotateImage(-1)">CCW 1</label>
+                    <label class="my-btn thick08 w24" onclick="rotateImage(1)">CW 1</label>
+                    <label class="my-btn thick08 w24" onclick="rotateImage(-90)">CCW 90</label>
+                    <label class="my-btn thick08 w24" onclick="rotateImage(90)">CW 90</label>
+                </div>
+                <div class="topic-container w15">
+                    <label class="my-btn" onclick="finishGeometoryMode()">OK</label>
+                </div>
+            </div>
+
+            <div id="colorComp" class="topic-container">
+                <div class="topic-container w85">
+                    <div class="slider-container">
+                        <div class="color-category">輝度</div>
+                        <input type="range" id="brightness" min="0" max="200" step="1" value="100">
+                    </div>
+                    <div class="slider-container">
+                        <div class="color-category">対照</div>
+                        <input type="range" id="contrast" min="0" max="200" step="1" value="100">
+                    </div>
+                    <div class="slider-container">
+                        <div class="color-category">彩度</div>
+                        <input type="range" id="saturation" min="0" max="200" step="1" value="100">
+                    </div>
+                </div>
+                <div class="topic-container w15">
+                    <input id="checkOriginImageBtn" type="checkbox"/>
+                    <label class="my-toggle-btn" for="checkOriginImageBtn">元画像<br>表示中</label>
+                </div>
+            </div>
         </div>
-        <img id="processedImage" src="#" alt="Original Image" style="max-width: 400px;">
-        <img id="downloadImage" src="#" alt="Download Image" style="max-width: 400px;">
-    </div>
-    <!-- 回転ボタン -->
-    <button id="rotateLeft1">Rotate Left 1</button>
-    <button id="rotateRight1">Rotate Right 1</button>        
-    <button id="rotateLeft90">Rotate Left 90</button>
-    <button id="rotateRight90">Rotate Right 90</button>        
-    <!-- OKボタン -->
-    <button id="okBtn">OK</button>
 
-    <div>
-        <label for="brightness">Brightness:</label>
-        <input type="range" id="brightness" min="0" max="200" step="1" value="100">
-    </div>
-    <div>
-        <label for="contrast">Contrast:</label>
-        <input type="range" id="contrast" min="0" max="200" step="1" value="100">
-    </div>
-    <div>
-        <label for="saturation">Saturation:</label>
-        <input type="range" id="saturation" min="0" max="200" step="1" value="100">
+        <div class="sub-container">
+            <div class="loading"><div><img src="../loading.gif"/></div></div>
+
+            <div class="title-container"><div class="w03e"></div>基本情報</div>
+            
+            <div class="topic-container">
+                <div class="place-container">
+                    <div>地方</div>
+                    <input class="text-box" type="text" id="area" placeholder="Area">
+                </div>
+                <div class="place-container">
+                    <div>都道府県</div>
+                    <input class="text-box" type="text" id="prefecture" placeholder="Prefecture">
+                </div>
+                <div class="place-container">
+                    <div>市町村</div>
+                    <input class="text-box" type="text" id="city" placeholder="City">
+                </div>
+                <div class="place-container">
+                    <div>市町村（かな）</div>
+                    <input class="text-box" type="text" id="cityHiragana" placeholder="City Hiragana">
+                </div>
+            </div>
+
+            <div class="title-container"><div class="w03e"></div>撮影日時</div>
+            <div class="topic-container">
+                <div class="w5"></div>
+                <div id="datetime" class="w42 vmiddle">2020:12:15 11:00:00</div>
+                <input type="text" id="inputDate" class="text-box w33" placeholder="YYYYMMDD HHmmss">
+
+                <label class="my-btn w15 thick02" onclick="convertDateFormat()">変換</label>
+            </div>
+            <div class="space2"></div>
+
+            <div class="title-container"><div class="w03e"></div>GPS</div>
+            <div class="topic-container">
+                <div class="topic-container w5"></div>
+                <div class="topic-container w60 vmiddle">
+                    <div class="w20">緯度:</div>
+                    <div id="latitude" class="w80">111.1111</div>
+                    <div class="w20">経度:</div>
+                    <div id="longitude" class="w80">22.2242</div>
+                </div>
+                <div class="topic-container w35">
+                    <label class="my-btn w49 thick02" onclick="openGoogleMap()">ＭＡＰ<br>を表示</label>
+                    <label class="my-btn w49 thick02" onclick="getGpsFromUrl()">コピー<br>を変換</label>
+                </div>
+            </div>
+            <div class="space2"></div>
+
+            <div class="title-container"><div class="w03e"></div>メタ情報</div>
+            <div class="topic-container">
+                <input type="checkbox" id="color"/>
+                <label for="color" class="my-toggle-btn thick05 w19">Color<br>Photo</label>
+
+                <input type="checkbox" id="pokefuta">
+                <label for="pokefuta" class="my-toggle-btn thick05 w19">Pokefuta<br>Photo</label>
+
+                <input type="checkbox" id="design">
+                <label for="design" class="my-toggle-btn thick05 w19">Designed<br>Photo</label>
+
+                <input type="checkbox" id="chara">
+                <label for="chara" class="my-toggle-btn thick05 w19">Chara<br>Photo</label>
+
+                <input type="checkbox" id="reliability">
+                <label for="reliability" class="my-toggle-btn thick05 w19">Reliability</label>
+            </div>
+            <div class="space2"></div>
+
+            <div class="topic-container">
+                <label class="my-btn thick05 w74" onclick="uploadToServer()">Submit</label>
+                <label class="my-btn thick05 w25" onclick="downloadProcessedImage()">Download</label>
+            </div>
+        </div>
     </div>
 
-    <p>撮影日時: <span id="datetime"></span></p>
-    <input type="text" id="inputDate" placeholder="YYYYMMDD HHmmss">
-    <button onclick="convertDateFormat()">変換</button>
-    <p>緯度: <span id="latitude"></span></p>
-    <p>経度: <span id="longitude"></span></p>
-    <button id="showGoogleMapBtn">Google Mapを表示</button>
-    <button onclick="getGpsFromUrl()">変換</button>
+    <footer>
+      &copy; 2023 <a href="https://yushisato.com">Yushi Sato</a>
+    </footer>
 
-    <input type="text" id="area" placeholder="area">
-    <input type="text" id="prefecture" placeholder="Prefecture">
-    <input type="text" id="city" placeholder="City">
-    <input type="text" id="cityHiragana" placeholder="Hiragana City">
-    <input type="checkbox" id="color"> Color Photo
-    <input type="checkbox" id="pokefuta"> Pokefuta Photo
-    <input type="checkbox" id="design"> Designed Photo
-    <input type="checkbox" id="chara"> Chara Photo
-    <input type="checkbox" id="reliability"> Reliability
-    <button id="submitBtn">Submit</button>
-    <!-- <script src="../js/mainRegister_js.html"></script> -->
+    <!-- <script src="./register.js"></script> -->
     <?!= include('Public/js/mainRegister_js'); ?>
 </body>
 </html>
