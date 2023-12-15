@@ -72,8 +72,20 @@ function editManhole(rowIndex, area, prefecture, city, city_kana, fileName, date
  * @param {string} fileName      削除する写真の名前
 */
 function removeManhole(rowIndex, fileName){
+    const rowInfo = getTargetRowManholeInfo(rowIndex);
+    const area = rowInfo["area"]; 
+    const prefecture = rowInfo["prefecture"]; 
+    const city = rowInfo["city"]; 
+    const city_kana = rowInfo["cityHiragana"]; 
+
     removeTargetCityFromPhotoSheet(rowIndex);
     deletePhotoFile(fileName);
+
+    // 削除した市町村が0になった場合に、CITYシートからも削除する
+    if (getPhotoNumsOfTargetCity(area, prefecture, city, city_kana) == 0) {
+        const index = isExistTargetCityInTargetSheet(CITY_SHEET, area, prefecture, city, city_kana);
+        removeTargetCityFromCitySheet(index); 
+    }
 }
 
 
