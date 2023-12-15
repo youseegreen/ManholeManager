@@ -1,39 +1,62 @@
 <script>
 const fileInput = document.getElementById('fileInput');
+
+const originImage = document.getElementById('originImage');
 const processedImage = document.getElementById('processedImage');
-const downloadImage = document.getElementById('downloadImage');
-const datetimeElement = document.getElementById('datetime');
-const latitudeElement = document.getElementById('latitude');
-const longitudeElement = document.getElementById('longitude');
+
+const geometoryCompContainer = document.getElementById('geometoryComp');
+const colorCompContainer = document.getElementById('colorComp');
+
+const loadings = document.getElementsByClassName('loading');
+
+const brightnessRange = document.getElementById('brightness');
+const contrastRange = document.getElementById('contrast');
+const saturationRange = document.getElementById('saturation');
+const checkOriginImageBtn = document.getElementById('checkOriginImageBtn');
+
+
 const areaInput = document.getElementById('area');
 const prefectureInput = document.getElementById('prefecture');
 const cityInput = document.getElementById('city');
 const cityHiraganaInput = document.getElementById('cityHiragana');
+
+const datetimeElement = document.getElementById('datetime');
+const latitudeElement = document.getElementById('latitude');
+const longitudeElement = document.getElementById('longitude');
+
 const colorCheckbox = document.getElementById('color');
 const charaCheckbox = document.getElementById('chara');
 const pokefutaCheckbox = document.getElementById('pokefuta');
 const designedCheckbox = document.getElementById('design');
 const reliabilityCheckbox = document.getElementById('reliability');
 
-const rotateLeft1Btn = document.getElementById('rotateLeft1');
-const rotateRight1Btn = document.getElementById('rotateRight1');
-const rotateLeft90Btn = document.getElementById('rotateLeft90');
-const rotateRight90Btn = document.getElementById('rotateRight90');
-const croppedImage = document.getElementById('croppedImage');
-const brightnessRange = document.getElementById('brightness');
-const contrastRange = document.getElementById('contrast');
-const saturationRange = document.getElementById('saturation');
-
-const showGoogleMapBtn = document.getElementById('showGoogleMapBtn');        
-
-const submitBtn = document.getElementById('submitBtn');
-const okBtn = document.getElementById('okBtn');
-
-let cropper;
-let exifData;
+let cropper = null;
+let exifData = null;
 let brightness = 0;
 let contrast = 1;
 let saturation = 1;
+
+
+function showLoading() {
+    for (var i = 0; i < loadings.length; i++) 
+        loadings[i].style.display = "block";
+}
+function unshowLoading() {
+    for (var i = 0; i < loadings.length; i++) 
+        loadings[i].style.display = "none";
+}
+
+
+// ファイル名から撮影日時を取得する
+function getDateTimeFromFileName(filename) {
+    let retVal = undefined;
+    const regex = /@([-0-9.]+),([-0-9.]+),([0-9.]+z)/;  // fixme
+    const match = filename.match(regex);
+    if (match) {
+        retVal = match[1];
+    } 
+    return retVal;
+}
 
 // 画像の情報を取得する
 function extractExifData(imgFile) {
@@ -44,10 +67,9 @@ function extractExifData(imgFile) {
         // 画像からExifデータを取得
         exifData = piexif.load(dataURL);
         delete exifData["0th"]["274"];
-        console.log(exifData);
         // 撮影日時を取得
         const datetimeOriginal = exifData["Exif"]["36867"];
-        const datetime = datetimeOriginal || '情報なし';
+        const datetime = datetimeOriginal || getDateTimeFromFileName(imgFile.name) || '情報なし';
         // 緯度経度情報を取得
         const gps = exifData["GPS"];
         const latitude = gps[piexif.GPSIFD.GPSLatitude] || '情報なし';
@@ -71,24 +93,34 @@ function addExifData(imgTag) {
 
 
 // アップロードした画像のトリミングと回転をスタートする
-startModifyImageGeometry = function(imgTag){
+function startModifyImageGeometry(tgtImage) {
+    geometoryCompContainer.style.display = "flex";
+    colorCompContainer.style.display = "none";
+    originImage.style.display = "block";
+    processedImage.style.display = "none";
     // 自動的にトリミングモードになる
-    cropper = new Cropper(croppedImage, {
+    cropper = new Cropper(tgtImage, {
         aspectRatio: 1, // トリミングアスペクト比
         viewMode: 2,    // トリミングモード
     });
 }
+
 // トリミングと回転を終了し、変換後の画像を表示する
-endMofigyImageGeometry = function(){
+function endMofigyImageGeometry() {
     // トリミングされた画像データを取得
     const dstImageDataURL = cropper.getCroppedCanvas().toDataURL('image/jpeg');
     // Cropperのトリミングモードを解除
     cropper.destroy();
+    geometoryCompContainer.style.display = "none";
+    colorCompContainer.style.display = "flex";
+    originImage.style.display = "none";
+    processedImage.style.display = "block";
     // 画像データを表示
     return dstImageDataURL;
 }
+
 // cropperがバインドしている画像を回転させる
-rotateImage = function(angle){
+function rotateImage(angle) {
     cropper.rotate(angle);
 }
 
@@ -250,35 +282,41 @@ function convertDateFormat() {
 fileInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     const imageUrl = URL.createObjectURL(file);
-    croppedImage.src = imageUrl;
+    originImage.src = imageUrl;
     // 画像情報の取得と画像の幾何変換を行う            
     extractExifData(file);
-    startModifyImageGeometry(croppedImage);
+    startModifyImageGeometry(originImage);
 });
 
-// 回転ボタンのクリックイベントリスナー
-rotateLeft1Btn.addEventListener('click', function () { rotateImage(-1); });
-rotateRight1Btn.addEventListener('click', function () { rotateImage(1); });
-rotateLeft90Btn.addEventListener('click', function () { rotateImage(-90); });
-rotateRight90Btn.addEventListener('click', function () { rotateImage(90); });
 // 画像調整のスライダー処理を追加
-brightnessRange.addEventListener('input', function () { applyBrightnessContrastSaturation(croppedImage, processedImage); });
-contrastRange.addEventListener('input', function () { applyBrightnessContrastSaturation(croppedImage, processedImage); });
-saturationRange.addEventListener('input', function () { applyBrightnessContrastSaturation(croppedImage, processedImage); });
-showGoogleMapBtn.addEventListener('click', function () { openGoogleMap(); });
-
+brightnessRange.addEventListener('input', function () { applyBrightnessContrastSaturation(originImage, processedImage); });
+contrastRange.addEventListener('input', function () { applyBrightnessContrastSaturation(originImage, processedImage); });
+saturationRange.addEventListener('input', function () { applyBrightnessContrastSaturation(originImage, processedImage); });
 
 // トリミングモードを終了し、色補正モードに突入する
-okBtn.addEventListener('click', function () {
+function finishGeometoryMode() {
     // トリミングされた画像データを取得
-    const croppedImageDataURL = endMofigyImageGeometry();  
+    const originImageDataURL = endMofigyImageGeometry();  
     // 画像データを表示
-    croppedImage.src = croppedImageDataURL;
-    applyBrightnessContrastSaturation(croppedImage, processedImage);
+    originImage.src = originImageDataURL;
+    applyBrightnessContrastSaturation(originImage, processedImage);
+}
+
+// オリジナル画像を表示する
+checkOriginImageBtn.addEventListener('click', function () {
+    if (checkOriginImageBtn.checked) {
+        originImage.style.display = "block";
+        processedImage.style.display = "none";
+    }
+    else {
+        originImage.style.display = "none";
+        processedImage.style.display = "block";
+    }
 });
 
 // サーバーにマンホール情報をアップロードする
-submitBtn.addEventListener('click', function () {
+function uploadToServer() {
+    showLoading();
     // フォームの値を取得
     const area = areaInput.value;
     const prefecture = prefectureInput.value;
@@ -298,19 +336,35 @@ submitBtn.addEventListener('click', function () {
     const processedImageData = processedImage.src;
     // 画像データ、フォームの値をサーバーに送信する
     google.script.run
-        .withSuccessHandler(function(result) {console.log("serverResponse", result); })
+        .withSuccessHandler(function(result) {console.log("serverResponse", result); unshowLoading(); })
         .withFailureHandler(function(error) { alert("サーバー側でエラーが発生しました: " + error.message); })
         .registerManhole(area, prefecture, city, cityHiragana, date, latitude, longitude, 
           isPokefuta, isChara, isColor, isDesign, isReliability, processedImageData);
+}
 
+function downloadProcessedImage() {
     // 元サイズの画像データを作成。クライアント側がダウンロードできるようにする
-    applyBrightnessContrastSaturation(croppedImage, downloadImage, true).then(() => {
+    applyBrightnessContrastSaturation(originImage, downloadImage, true).then(() => {
         // 画像にExifを埋め込む
         addExifData(downloadImage);
         const downloadImageData = downloadImage.src;
     });
+}
 
-});
+
+function initAll() {
+    processedImage.style.display = "none";
+    originImage.style.display = "none";
+    geometoryCompContainer.style.display = "none";
+    colorCompContainer.style.display = "none";
+    cropper = null;
+    exifData = null;
+    brightness = 0;
+    contrast = 1;
+    saturation = 1;
+}
+window.onload = initAll;
+
 </script>
 
 

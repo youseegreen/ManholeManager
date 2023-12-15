@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <!-- レスポンシブにするために必要 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>マンホール登録アプリ</title>
+    <title>Manhole Remover</title>
     <!-- アイコン関連のインクルード -->
     <link rel="icon" href="https://yushisato.com/images/logos/youseegreen.ico">
     <link rel="shortcut icon" href="https://yushisato.com/images/logos/youseegreen.ico">
@@ -18,7 +18,7 @@
     <!-- GAS用 -->
     <?!= include('Public/css/myStyle_css'); ?>    
     <?!= include('Vendor/CropperJS/cropper_min_css'); ?>
-    <?!= include('Vendor/CropperJS/cropper_min_js'); ?> 
+    <?!= include('Vendor/CropperJS/cropper_min_js'); ?>
     <?!= include('Vendor/PiexifJS/piexif_js'); ?>
 </head>
 
@@ -27,7 +27,7 @@
         <div class="header-container">
             <!-- ヘッダー左 ブランドロゴ -->
             <div class="header-left">
-                <a>Manhole Register</a>
+                <a>Manhole Remover</a>
             </div>
             <!-- メニュー等 ヘッダー右 -->
             <div class="header-right">
@@ -37,16 +37,16 @@
                   <label for="menu-btn-check" class="menu-btn"><span></span></label>
                   <div class="menu-content">
                       <ul>
+                        <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=register">Register</a></li>
                         <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=editor">Editor</a></li>
-                        <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=remover">Remover</a></li>
                       </ul>
                   </div>
               </div>    
               <!-- PC用 : 直書き -->
               <nav class="pc-nav">
                 <ul>
+                  <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=register">Register</a></li>
                   <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=editor">Editor</a></li>
-                  <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=remover">Remover</a></li>
                 </ul>
               </nav>
             </div>
@@ -59,51 +59,12 @@
             <div class="loading"><div><img src="https://raw.githubusercontent.com/youseegreen/ManholeManager/main/loading.gif"/></div></div>
 
             <div class="topic-container">
-                <input id="fileInput" type="file" accept="image/*"/>
-                <label class="my-btn thick05 w59" for="fileInput">ファイル選択</label>
-
-                <input id="geometoryCompBtn" type="checkbox"/>
-                <label class="my-toggle-btn thick05 w19" for="geometoryCompBtn">幾何補正</label>
-                <input id="colorCompBtn" type="checkbox"/>
-                <label class="my-toggle-btn thick05 w19" for="colorCompBtn">色補正</label>
+                <input class="text-box w65" type="text" id="rowIndex" placeholder="input manhole id">
+                <label class="my-btn w30 thick05" onclick="getManholeInfoFromServer()">検索</label>
             </div>
 
             <div class="photoArea">
                 <img id="originImage" class="image" src="#" alt="Original Image">    
-                <img id="processedImage" class="image" src="#" alt="Processed Image">
-            </div>
-
-            <div id="geometoryComp" class="topic-container">
-                <div class="topic-container w85">
-                    <label class="my-btn thick08 w24" onclick="rotateImage(-1)">CCW 1</label>
-                    <label class="my-btn thick08 w24" onclick="rotateImage(1)">CW 1</label>
-                    <label class="my-btn thick08 w24" onclick="rotateImage(-90)">CCW 90</label>
-                    <label class="my-btn thick08 w24" onclick="rotateImage(90)">CW 90</label>
-                </div>
-                <div class="topic-container w15">
-                    <label class="my-btn" onclick="finishGeometoryMode()">OK</label>
-                </div>
-            </div>
-
-            <div id="colorComp" class="topic-container">
-                <div class="topic-container w85">
-                    <div class="slider-container">
-                        <div class="color-category">輝度</div>
-                        <input type="range" id="brightness" min="0" max="200" step="1" value="100">
-                    </div>
-                    <div class="slider-container">
-                        <div class="color-category">対照</div>
-                        <input type="range" id="contrast" min="0" max="200" step="1" value="100">
-                    </div>
-                    <div class="slider-container">
-                        <div class="color-category">彩度</div>
-                        <input type="range" id="saturation" min="0" max="200" step="1" value="100">
-                    </div>
-                </div>
-                <div class="topic-container w15">
-                    <input id="checkOriginImageBtn" type="checkbox"/>
-                    <label class="my-toggle-btn" for="checkOriginImageBtn">元画像<br>表示中</label>
-                </div>
             </div>
         </div>
 
@@ -135,9 +96,6 @@
             <div class="topic-container">
                 <div class="w5"></div>
                 <div id="datetime" class="w42 vmiddle">2020:12:15 11:00:00</div>
-                <input type="text" id="inputDate" class="text-box w33" placeholder="YYYYMMDD HHmmss">
-
-                <label class="my-btn w15 thick02" onclick="convertDateFormat()">変換</label>
             </div>
             <div class="space2"></div>
 
@@ -149,10 +107,6 @@
                     <div id="latitude" class="w80">111.1111</div>
                     <div class="w20">経度:</div>
                     <div id="longitude" class="w80">22.2242</div>
-                </div>
-                <div class="topic-container w35">
-                    <label class="my-btn w49 thick02" onclick="openGoogleMap()">ＭＡＰ<br>を表示</label>
-                    <label class="my-btn w49 thick02" onclick="getGpsFromUrl()">コピー<br>を変換</label>
                 </div>
             </div>
             <div class="space2"></div>
@@ -177,8 +131,7 @@
             <div class="space2"></div>
 
             <div class="topic-container">
-                <label class="my-btn thick05 w74" onclick="uploadToServer()">Submit</label>
-                <label class="my-btn thick05 w25" onclick="downloadProcessedImage()">Download</label>
+                <label class="my-btn thick05" onclick="removeFromServer()">削除</label>
             </div>
         </div>
     </div>
@@ -188,7 +141,7 @@
     </footer>
 
     <!-- <script src="./register.js"></script> -->
-    <?!= include('Public/js/mainRegister_js'); ?>
+    <?!= include('Public/js/mainRemover_js'); ?>
 </body>
 </html>
 
