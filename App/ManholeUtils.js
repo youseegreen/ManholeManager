@@ -4,14 +4,14 @@
 
 
 // マンホール写真フォルダの暗号化ID
-// const ENCRYPTED_PHOTO_FOLDER_ID = 'U2FsdGVkX1/1iIPWCU0on73PHtuXZ5lk0X1W3lLSn9rZvfGhp3cKFXRYv/HH2uUBuISdxWuPWWx23wHL6KRUeg==';
+const ENCRYPTED_PHOTO_FOLDER_ID = 'U2FsdGVkX1/1iIPWCU0on73PHtuXZ5lk0X1W3lLSn9rZvfGhp3cKFXRYv/HH2uUBuISdxWuPWWx23wHL6KRUeg==';
 // 開発用
-const ENCRYPTED_PHOTO_FOLDER_ID = 'U2FsdGVkX1/5HsO0hGy87kcdGbkU4trM+uCq6xQo5RUzyeWXAxQnE5FiXs8VYgMXUcujgQBD9ktS2QXOzt7d4A==';
+// const ENCRYPTED_PHOTO_FOLDER_ID = 'U2FsdGVkX1/5HsO0hGy87kcdGbkU4trM+uCq6xQo5RUzyeWXAxQnE5FiXs8VYgMXUcujgQBD9ktS2QXOzt7d4A==';
 
 // マンホールDBスプレッドシートの暗号化ID
-// const ENCRYPTED_MANHOLEDB_SPREADSHEET_ID = 'U2FsdGVkX1/735YOpBucrfeQADhG65NQeze79wPhOlMBkAej2DhLCpj1BG0ep+3PYw2Cl1+qg+eCkvll/uT8bg==';
+const ENCRYPTED_MANHOLEDB_SPREADSHEET_ID = 'U2FsdGVkX1/735YOpBucrfeQADhG65NQeze79wPhOlMBkAej2DhLCpj1BG0ep+3PYw2Cl1+qg+eCkvll/uT8bg==';
 // 開発用
-const ENCRYPTED_MANHOLEDB_SPREADSHEET_ID = 'U2FsdGVkX194VDMvv7vcFiJn8O1Td8PGsb6zvRcF4L1/E2mr+z1LTP9ePKJ4bQqrogGvxi6iqyfz594UtZT0aA==';
+// const ENCRYPTED_MANHOLEDB_SPREADSHEET_ID = 'U2FsdGVkX194VDMvv7vcFiJn8O1Td8PGsb6zvRcF4L1/E2mr+z1LTP9ePKJ4bQqrogGvxi6iqyfz594UtZT0aA==';
 
 // 市町村シートの名前
 const CITY_SHEET = 'city';
@@ -112,7 +112,6 @@ function deletePhotoFile(fileName){
 function registTargetCityToCitySheet(rowIndex, tgtArea, tgtPrefecture, tgtCity, tgtCityKana){
   var citySheet = getManholeDBCitySheet();
   citySheet.insertRowBefore(rowIndex);
-  // FIXME  更新日時を入れるか否か
   citySheet.getRange(rowIndex, 1, 1, 4).setValues([[tgtArea, tgtPrefecture, tgtCity, tgtCityKana]]);
 }
 
@@ -234,7 +233,7 @@ function isExistTargetCityInTargetSheet(tgt_sheet, tgt_area, tgt_prefecture, tgt
           return 0;
         }
         var cidx = PREFECTURES[tgt_area].indexOf(values[i][1]);
-        if (cidx >= tgt_prefecture_idx) break;
+        if (cidx >= tgt_prefecture_idx || cidx == -1) break;
         i = i + 1;
     }
     // 対象の市があるかを確認   values[i][3] : city_kana
