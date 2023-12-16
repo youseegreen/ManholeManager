@@ -114,6 +114,8 @@ function test13(){
   console.log(isExistTargetCityInTargetSheet(CITY_SHEET, "その他", "台湾", "台北市", "たいぺいし"));
 }
 
-
+function test14(){
+  console.log(getJsonFileBlob());
+}
 
 
