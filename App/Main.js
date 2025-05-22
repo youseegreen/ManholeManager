@@ -15,21 +15,21 @@ function doGet(e){
   var index=e.parameter["i"];
 
   if(page == "register" || page==null) {
-    return HtmlService.createTemplateFromFile('Public/html/register.html').evaluate().setTitle('Manhole register').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');    
+    return HtmlService.createTemplateFromFile('Public/html/register.html').evaluate().setTitle('Manhole register').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);    
   }
   else if(page == "editor") {
     var template = HtmlService.createTemplateFromFile('Public/html/editor.html');
     template.index = index;
-    return template.evaluate().setTitle('Manhole editor').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
+    return template.evaluate().setTitle('Manhole editor').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
   else if(page == "remover") {
     var template = HtmlService.createTemplateFromFile('Public/html/remover.html');
     template.index = index;
-    return template.evaluate().setTitle('Manhole remover').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
+    return template.evaluate().setTitle('Manhole remover').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
   else if(page == "downloader") {
     var template = HtmlService.createTemplateFromFile('Public/html/downloader.html');
-    return template.evaluate().setTitle('Manhole Downloader').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico');
+    return template.evaluate().setTitle('Manhole Downloader').setFaviconUrl('https://github.com/youseegreen/youseegreen.github.io/blob/develop/src/images/logos/youseegreen.ico').setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
   }
 }
   
@@ -42,4 +42,9 @@ function doGet(e){
  */
 function include(filename) {
     return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+
+function getAppUrl() {
+  return ScriptApp.getService().getUrl();
 }

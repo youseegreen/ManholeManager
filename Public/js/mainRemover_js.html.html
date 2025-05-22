@@ -21,6 +21,8 @@ const pokefutaCheckbox = document.getElementById('pokefuta');
 const designedCheckbox = document.getElementById('design');
 const reliabilityCheckbox = document.getElementById('reliability');
 
+const passwordInput = document.getElementById('password');
+
 let rowIndex = -1;
 let exifData = null;
 
@@ -82,10 +84,11 @@ function getManholeInfoFromServer(){
 // サーバーにマンホール情報をアップロードする
 function removeFromServer() {
     showLoading();
+    const password = passwordInput.value;
     google.script.run
         .withSuccessHandler(function(result) {console.log("serverResponse", result); unshowLoading(); })
         .withFailureHandler(function(error) { alert("サーバー側でエラーが発生しました: " + error.message); })
-        .removeManhole(rowIndex, fileName);
+        .removeManhole(rowIndex, fileName, btoa(password));
 }
 
 </script>
