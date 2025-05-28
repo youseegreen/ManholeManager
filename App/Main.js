@@ -1,7 +1,7 @@
 // exec（公開版）
-// https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec 
+// https://script.google.com/macros/s/AKfycbwzVGxh0ZdDK_9sjPjLfhqNpkBL6RWZ4aQE1BS6IJaVDEwe6l9GMWnl8tEZfdWy4h6_og/exec
 // dev（開発版）
-// https://script.google.com/macros/s/AKfycbzdCKy4oLzGPjyGH5nwrJg8E4B18kblkYhCsCVLnNg/dev
+// https://script.google.com/macros/s/AKfycbwWoq7rKM1FXLWhRDX_LBdjeN3PLIR9UlfKd_VE3J3-/dev
 
 
 /**

@@ -118,4 +118,7 @@ function test14(){
   console.log(getJsonFileBlob());
 }
 
+function test15(){
+  console.log(checkAccessPermission(Utilities.base64Encode("hoge"))? "yes": "no");
+}
 

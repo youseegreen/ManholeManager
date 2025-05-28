@@ -13,15 +13,13 @@
  * @param {Boolean} designed     デザインものかどうか
  * @param {Boolean} reliability  データに信頼性があるかどうか
  * @param {string} photoURL      写真（'data:image/jpeg;base64,/...'形式）
- * @param {string} password_blob 実行権限パスワード（blob形式)
+ * @param {string} passwordBlob 実行権限パスワード（blob形式)
  */
 function registerManhole(area, prefecture, city, city_kana, date, latitude, longitude, 
-    pokefuta, chara, color, designed, reliability, photoURL, password_blob){
+    pokefuta, chara, color, designed, reliability, photoURL, passwordBlob){
     // 実行権限があるかをチェックする
-    const dec = Utilities.base64Decode(password_blob, Utilities.Charset.UTF_8)
-    const password = Utilities.newBlob(dec).getDataAsString()
-    if (password !== PropertiesService.getScriptProperties().getProperty("PASSWORD")) {
-      return "Password is not correct!";
+    if (!checkAccessPermission(passwordBlob)) {
+        return "Password is not correct!";
     }
 
     // CitySheetに市町村が登録されているか確認する    
@@ -62,15 +60,13 @@ function registerManhole(area, prefecture, city, city_kana, date, latitude, long
  * @param {Boolean} designed     デザインものかどうか
  * @param {Boolean} reliability  データに信頼性があるかどうか
  * @param {string} photoURL      写真（'data:image/jpeg;base64,/...'形式）
- * @param {string} password_blob 実行権限パスワード（blob形式)
+ * @param {string} passwordBlob 実行権限パスワード（blob形式)
  */
 function editManhole(rowIndex, area, prefecture, city, city_kana, fileName, date, latitude, longitude, 
-    pokefuta, chara, color, designed, reliability, photoURL, password_blob){
+    pokefuta, chara, color, designed, reliability, photoURL, passwordBlob){
     // 実行権限があるかをチェックする
-    const dec = Utilities.base64Decode(password_blob, Utilities.Charset.UTF_8)
-    const password = Utilities.newBlob(dec).getDataAsString()
-    if (password !== PropertiesService.getScriptProperties().getProperty("PASSWORD")) {
-      return "Password is not correct!";
+    if (!checkAccessPermission(passwordBlob)) {
+        return "Password is not correct!";
     }
 
     editTargetCityInPhotoSheet(rowIndex, [area, prefecture, city, city_kana, fileName, 
@@ -86,14 +82,12 @@ function editManhole(rowIndex, area, prefecture, city, city_kana, fileName, date
  * マンホールDBに登録されている写真や撮影日時の情報を削除する
  * @param {string} rowIndex      削除するデータベースの行番号
  * @param {string} fileName      削除する写真の名前
- * @param {string} password_blob 実行権限パスワード（blob形式)
+ * @param {string} passwordBlob 実行権限パスワード（blob形式)
 */
-function removeManhole(rowIndex, fileName, password_blob){
+function removeManhole(rowIndex, fileName, passwordBlob){
     // 実行権限があるかをチェックする
-    const dec = Utilities.base64Decode(password_blob, Utilities.Charset.UTF_8)
-    const password = Utilities.newBlob(dec).getDataAsString()
-    if (password !== PropertiesService.getScriptProperties().getProperty("PASSWORD")) {
-      return "Password is not correct!";
+    if (!checkAccessPermission(passwordBlob)) {
+        return "Password is not correct!";
     }
 
     const rowInfo = getTargetRowManholeInfo(rowIndex);

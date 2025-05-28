@@ -75,12 +75,16 @@ function extractExifData(imgFile) {
         // 緯度経度情報を取得
         const gps = exifData["GPS"];
         const latitude = gps[piexif.GPSIFD.GPSLatitude] || '情報なし';
-        const longitude = gps[piexif.GPSIFD.GPSLongitude] || '情報なし';
-        // 撮影日時を表示
+        const longitude = gps[piexif.GPSIFD.GPSLongitude] || '';
+        const latRef = gps[piexif.GPSIFD.GPSLatitudeRef] || '情報なし';
+        const lngRef = gps[piexif.GPSIFD.GPSLongitudeRef] || '';
         datetimeElement.textContent = datetime;
         // 緯度経度情報を表示
-        latitudeElement.textContent = latitude;
-        longitudeElement.textContent = longitude;
+        latitudeElement.textContent = dmsToDEG(latitude, latRef);
+        longitudeElement.textContent = dmsToDEG(longitude, lngRef);
+        // gpsデータから都道府県の情報を自動推定する
+        if (areaInput.value == '') 
+            estimateGeoInfo(latitude, longitude);
     };
     // ファイルを読み込む
     reader.readAsDataURL(imgFile);
@@ -217,7 +221,6 @@ function getGpsFromUrl(){
       exifData["GPS"]["2"] = [[latitudeDMS[0], 1], [latitudeDMS[1], 1], [latitudeDMS[2], 10000]];
       exifData["GPS"]["3"] = longitudeDMS[3];
       exifData["GPS"]["4"] = [[longitudeDMS[0], 1], [longitudeDMS[1], 1], [longitudeDMS[2], 10000]];
-      console.log(latitudeDMS);
       latitudeElement.textContent = latitudeDEG; 
       longitudeElement.textContent = longitudeDEG; 
     } 
@@ -241,11 +244,14 @@ function degToDMS(deg, axis) {
 }
 
 // DMS形式からDEG形式への変換関数
-function dmsToDEG(dmsArr) {
+function dmsToDEG(dmsArr, ref) {
     const degrees = dmsArr["0"][0];
     const minutes = dmsArr["1"][0];
     const seconds = dmsArr["2"][0] / dmsArr["2"][1];
-    return degrees + minutes / 60.0 + seconds / 3600.0;
+    let deg = degrees + minutes / 60 + seconds / 3600;
+    // 北緯(N), 東経(E)は正、南緯(S), 西経(W)は負
+    if (ref === "S" || ref === "W") deg *= -1;
+    return deg;
 }
 
 
@@ -275,20 +281,92 @@ function convertDateFormat() {
   }
 }
 
+// GPSデータから地域、都道府県、市町村を推定する
+async function estimateGeoInfo(lat, lon) {
+    lat = dmsToDEG(lat) || '';
+    lon = dmsToDEG(lon) || '';
+    const url = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&zoom=10&addressdetails=1';
+    try {
+        const response = await fetch(url, {
+            headers: {
+                "Accept-Language": "ja" // 日本語優先
+            }
+        });
+        const data = await response.json();
+        const address = data.address;
+        areaInput.value = getAreaFromPrefecture(address.province);
+        prefectureInput.value = address.province || "不明";
+        cityInput.value = address.city || address.town || address.village || "不明";
+    } catch (error) {
+        console.error("ジオコーディング失敗:", error);
+        alert("地名の推定に失敗しました。");
+    }
+}
 
-
-
-
+function getAreaFromPrefecture(prefecture) { 
+    const areas = {
+        "北海道地方": ["北海道"], 
+        "東北地方": ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"], 
+        "関東地方": ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"], 
+        "中部地方": ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県"], 
+        "近畿地方": ["三重県", "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"], 
+        "中国地方": ["鳥取県", "島根県", "岡山県", "広島県", "山口県"], 
+        "四国地方": ["徳島県", "香川県", "愛媛県", "高知県"], 
+        "九州地方": ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"], 
+        "その他": ["中国", "アメリカ", "韓国", "フィリピン", "タイ", "シンガポール", "インド", "イギリス", "オランダ", "台湾", "フランス"]  // FIXME
+    };
+    for (const [area, prefs] of Object.entries(areas)) {
+        if (prefs.includes(prefecture)) {
+            return area;
+        }
+    }
+    return "その他";    
+}
 
 // ファイルがアップロードされた時の処理
 fileInput.addEventListener('change', function (event) {
     const file = event.target.files[0];
     const imageUrl = URL.createObjectURL(file);
     originImage.src = imageUrl;
-    // 画像情報の取得と画像の幾何変換を行う            
+    // 画像情報の取得を行う
     extractExifData(file);
-    startModifyImageGeometry(originImage);
+
+    // // 画像の幾何変換を行う
+    // startModifyImageGeometry(originImage);
+    // 画像の補正なしに情報入力にいく
+    createProcessImage(originImage, processedImage);
 });
+
+function createProcessImage(srcData, dstData) {
+    geometoryCompContainer.style.display = "none";
+    colorCompContainer.style.display = "flex";
+    originImage.style.display = "none";
+    processedImage.style.display = "block";
+    return new Promise((resolve, reject) => {            
+        const image = new Image();
+        image.src = srcData.src;
+        image.onload = function () {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const width = 600;
+            const height = 600;
+            ctx.canvas.width = width;    
+            ctx.canvas.height = height;  
+            ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, width, height);
+            let src = ctx.getImageData(0, 0, width, height);
+            let dst = ctx.createImageData(width, height);
+            for (let i = 0; i < src.data.length; i++) {
+                dst.data[i] = src.data[i];
+            }
+            // 変更後のピクセルデータでCanvas上の内容を上書きする。
+            ctx.putImageData(dst, 0, 0);
+            // 変更後の画像データを表示
+            dstData.src = canvas.toDataURL('image/jpeg');
+            // Promiseを解決して非同期処理を完了させる
+            resolve();                    
+        };
+    });
+}
 
 // 画像調整のスライダー処理を追加
 brightnessRange.addEventListener('input', function () { applyBrightnessContrastSaturation(originImage, processedImage); });
@@ -325,8 +403,8 @@ function uploadToServer() {
     const city = cityInput.value;
     const cityHiragana = cityHiraganaInput.value;
     const date = datetimeElement.textContent;
-    const latitude = dmsToDEG(exifData["GPS"]["2"]) || '';
-    const longitude = dmsToDEG(exifData["GPS"]["4"]) || '';
+    const latitude = dmsToDEG(exifData["GPS"]["2"], exifData["GPS"]["1"]) || '';
+    const longitude = dmsToDEG(exifData["GPS"]["4"], exifData["GPS"]["3"]) || '';
     const isPokefuta = pokefutaCheckbox.checked;
     const isColor = colorCheckbox.checked;
     const isChara = charaCheckbox.checked;

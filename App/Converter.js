@@ -33,7 +33,7 @@ function getManholeJson() {
   return JSONString;
 
   // Google Driveに保存する場合
-  var blob = Utilities.newBlob(JSONString, 'application/json', 'manhole.json');
+  var blob = Utilities.newBlob(JSONString, 'application/json', 'manholes.json');
   saveBlobAsFile(getPhotoFolder(), json_filename, blob);
 }
 
@@ -56,8 +56,8 @@ function getManholeGeojson() {
         i = i + 1;
 
         if (row[0][6] == ""){
-          row[0][7] = "0.0";  // 緯度
-          row[0][6] = "0.0";  // 経度
+          row[0][7] = "0.0";  // 経度
+          row[0][6] = "0.0";  // 緯度
         }
 
         var feature = {
@@ -76,7 +76,7 @@ function getManholeGeojson() {
             },
             geometry: {
               type: 'Point',
-              coordinates: [parseFloat(row[0][6]), parseFloat(row[0][7])] // スプレッドシート内のデータから座標を設定
+              coordinates: [parseFloat(row[0][7]), parseFloat(row[0][6])] // スプレッドシート内のデータから座標を設定
             }
         };
         geoJSON.features.push(feature);
