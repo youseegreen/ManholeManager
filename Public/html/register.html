@@ -37,16 +37,18 @@
                   <label for="menu-btn-check" class="menu-btn"><span></span></label>
                   <div class="menu-content">
                       <ul>
-                        <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=editor">Editor</a></li>
-                        <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=remover">Remover</a></li>
+                          <li><a href="<?= getAppUrl() ?>?p=editor">Editor</a></li>
+                          <li><a href="<?= getAppUrl() ?>?p=remover">Remover</a></li>
+                          <li><a href="<?= getAppUrl() ?>?p=downloader">Downloader</a></li>
                       </ul>
                   </div>
               </div>    
               <!-- PC用 : 直書き -->
               <nav class="pc-nav">
                 <ul>
-                  <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=editor">Editor</a></li>
-                  <li><a href="https://script.google.com/macros/s/AKfycbyQJPfeqoNTVCU5KKDHykwmYwlbHkpxBxXXxvIQ_dR5f7ledPHABlJYvrJ0KAmkjpr0/exec?p=remover">Remover</a></li>
+                  <li><a href="<?= getAppUrl() ?>?p=editor">Editor</a></li>
+                  <li><a href="<?= getAppUrl() ?>?p=remover">Remover</a></li>
+                  <li><a href="<?= getAppUrl() ?>?p=downloader">Downloader</a></li>
                 </ul>
               </nav>
             </div>
@@ -177,8 +179,9 @@
             <div class="space2"></div>
 
             <div class="topic-container">
-                <label class="my-btn thick05 w74" onclick="uploadToServer()">Submit</label>
-                <label class="my-btn thick05 w25" onclick="downloadProcessedImage()">Download</label>
+                <input type="text" id="password" class="text-box w49" placeholder="Password">
+                <label class="my-btn thick05 w24" onclick="uploadToServer()">Submit</label>
+                <label class="my-btn thick05 w24" onclick="downloadProcessedImage()">Download</label>
             </div>
         </div>
     </div>
@@ -186,7 +189,6 @@
     <footer>
       &copy; 2023 <a href="https://yushisato.com">Yushi Sato</a>
     </footer>
-
     <!-- <script src="./register.js"></script> -->
     <?!= include('Public/js/mainRegister_js'); ?>
 </body>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <!-- レスポンシブにするために必要 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Manhole Downloader</title>
+    <!-- アイコン関連のインクルード -->
+    <link rel="icon" href="https://yushisato.com/images/logos/youseegreen.ico">
+    <link rel="shortcut icon" href="https://yushisato.com/images/logos/youseegreen.ico">
+    <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+    <!-- Local開発用 -->
+    <!-- <link rel="stylesheet" href="./myStyle.css"> -->
+    <!-- GAS用 -->
+    <?!= include('Public/css/myStyle_css'); ?>    
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <!-- ヘッダー左 ブランドロゴ -->
+            <div class="header-left">
+                <a>Manhole Downloader</a>
+            </div>
+            <!-- メニュー等 ヘッダー右 -->
+            <div class="header-right">
+              <!-- スマホ用 : ハンバーガメニュー -->
+              <div class="hamburger-menu">
+                  <input type="checkbox" id="menu-btn-check">
+                  <label for="menu-btn-check" class="menu-btn"><span></span></label>
+                  <div class="menu-content">
+                      <ul>
+                          <li><a href="<?= getAppUrl() ?>?p=register">Register</a></li>
+                          <li><a href="<?= getAppUrl() ?>?p=editor">Editor</a></li>
+                          <li><a href="<?= getAppUrl() ?>?p=remover">Remover</a></li>
+                      </ul>
+                  </div>
+              </div>    
+              <!-- PC用 : 直書き -->
+              <nav class="pc-nav">
+                <ul>
+                  <li><a href="<?= getAppUrl() ?>?p=register">Register</a></li>
+                  <li><a href="<?= getAppUrl() ?>?p=editor">Editor</a></li>
+                  <li><a href="<?= getAppUrl() ?>?p=remover">Remover</a></li>
+                </ul>
+              </nav>
+            </div>
+      </div>
+    </header>
+
+    <div class="main-container">
+      <div class="sub-container" style="background-color: rgba(0,0,0,0);">
+          <div class="loading"><div><img src="https://raw.githubusercontent.com/youseegreen/ManholeManager/main/loading.gif"/></div></div>
+          <label class="my-btn thick08" onclick="getJsonFromServer()">json</label>
+      </div>
+      <div class="sub-container" style="background-color: rgba(0,0,0,0);">
+          <div class="loading"><div><img src="https://raw.githubusercontent.com/youseegreen/ManholeManager/main/loading.gif"/></div></div>
+          <label class="my-btn thick08" onclick="getGeojsonFromServer()">geojson</label>
+      </div>
+    </div>
+
+    <footer>
+      &copy; 2023 <a href="https://yushisato.com">Yushi Sato</a>
+    </footer>
+
+    <script>
+        const loadings = document.getElementsByClassName('loading');
+        function showLoading() {
+            for (var i = 0; i < loadings.length; i++) 
+                loadings[i].style.display = "block";
+        }
+        function unshowLoading() {
+            for (var i = 0; i < loadings.length; i++) 
+                loadings[i].style.display = "none";
+        }
+
+        function getJsonFromServer() {
+            showLoading();
+            google.script.run
+                .withSuccessHandler(function(result) { 
+                    let atag = document.createElement("a");
+                    const blob = new Blob([result], {"type" : "application/json"});
+                    atag.href = window.URL.createObjectURL(blob);
+                    atag.download = "manholes.json";
+                    atag.click();
+                    unshowLoading(); 
+                })
+                .withFailureHandler(function(error) { alert("サーバー側でエラーが発生しました: " + error.message); })
+                .getManholeJson(); 
+        }
+
+        function getGeojsonFromServer() {
+            showLoading();
+            google.script.run
+                .withSuccessHandler(function(result) { 
+                    let atag = document.createElement("a");
+                    const blob = new Blob([result], {"type" : "application/geojson"});
+                    atag.href = window.URL.createObjectURL(blob);
+                    atag.download = "manholes.geojson";
+                    atag.click();
+                    unshowLoading(); 
+                })
+                .withFailureHandler(function(error) { alert("サーバー側でエラーが発生しました: " + error.message); })
+                .getManholeGeojson(); 
+        }
+    </script> 
+</body>
+</html>
+
