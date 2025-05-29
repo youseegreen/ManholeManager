@@ -39,6 +39,20 @@ function getImgUrlFromFileName(tgtFolder, fileName){
 
 
 /**
+ * fileNameファイルをbase64('data:image/jpeg;base64,/9j/...'の'/9/...'部分)に変換する
+ * @param {string} fileName   URLを取得したいファイル名
+ * @return {string}           ファイルのbase64
+ */
+function getBase64FromFilename(fileName){
+  var tgtFile = getTargetFilesInTargetFolder(getPhotoFolder(), fileName, true);
+  if (tgtFile == null) return null;
+  var blob = tgtFile.getBlob();
+  var photoData = Utilities.base64Encode(blob.getBytes());
+  return photoData;
+}
+
+
+/**
  * tgtFolder内のfileNameという名前のファイルを削除する
  * @param {Folder} tgtFolder  対象のフォルダ
  * @param {string} fileName   削除したいファイル名

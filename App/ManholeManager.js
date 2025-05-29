@@ -40,6 +40,9 @@ function registerManhole(area, prefecture, city, city_kana, date, latitude, long
         date, latitude, longitude, pokefuta, chara, color, designed, reliability]);
     var photoBlob = convertImgUrlToImgBlob(photoURL, fileName);
     saveManholePhotoToPhotoFolder(photoBlob, fileName);
+
+    // Github用にファイル名を記録する
+    PushFileNameToGithubList(fileName);
 }
 
 
@@ -75,6 +78,9 @@ function editManhole(rowIndex, area, prefecture, city, city_kana, fileName, date
     deletePhotoFile(fileName);
     var photoBlob = convertImgUrlToImgBlob(photoURL, fileName);
     saveManholePhotoToPhotoFolder(photoBlob, fileName);
+
+    // Github用にファイル名を記録する
+    PushFileNameToGithubList(fileName);
 }
 
 
